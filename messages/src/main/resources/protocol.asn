@@ -1,0 +1,31 @@
+TEST_ASN DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+EXPORTS Group, Config, Ping, Pong;
+
+    Group ::= SEQUENCE {
+        groupName IA5String,
+        persons SEQUENCE OF Person
+    }
+
+    Person ::= SEQUENCE {
+        name IA5String,
+        age  INTEGER (0 .. 99)
+    }
+
+    GroupBuilderConfiguration ::= SEQUENCE {
+        maxGroupSize INTEGER (0 .. 127)
+    }
+
+    Ping ::= SEQUENCE {
+        challenge IA5String
+    }
+
+    Pong ::= SEQUENCE {
+        response IA5String
+    }
+
+    InternalState ::= SEQUENCE {
+        state  IA5String
+    }
+
+END

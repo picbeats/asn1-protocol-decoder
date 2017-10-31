@@ -1,0 +1,8 @@
+rootProject.name = 'asn1'
+include 'messages'
+findProject(':messages')?.name = 'asn1.messages'
+include 'protocol.decoder'
+findProject(':protocol.decoder')?.name = 'asn1.protocol.decoder'
+include 'protocol.generator'
+findProject(':protocol.generator')?.name = 'asn1.protocol.generator'
+

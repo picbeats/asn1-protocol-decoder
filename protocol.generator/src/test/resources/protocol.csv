@@ -1,0 +1,5 @@
+Method,URL,Archetype,Name,Request,Response
+/s/0,PingPong,Ping,Pong
+/p/p/0,LogGroup,Group,
+/p/s/_/0,ReportInternalState,InternalState,
+/p/cfg/_/0,GetGroupBuilderConfiguration,,GroupBuilderConfiguration

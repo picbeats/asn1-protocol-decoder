@@ -1,0 +1,56 @@
+group 'lunohod'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir:"../lib/binarynotes-dist-1.6/java")
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+sourceSets.main.java.srcDir "${buildDir}/generated-src/main/java"
+
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file("${buildDir}/generated-src/main/java")
+    }
+}
+
+
+compileJava.doFirst {
+    println("buildDir: ${projectDir}")
+}
+
+task genMessages(type: JavaExec) {
+    def infile = 'src/main/resources/protocol.asn'
+    inputs.file infile
+    def outdir = "${buildDir}/generated-src/main/java/com/lunohod/asn/messages"
+    main = "-jar"
+    outputs.dir outdir
+
+    doFirst { println "Generating sources...." }
+
+    def compiler = "${projectDir}/../lib/binarynotes-dist-1.6/compiler/bncompiler-1.6.jar"
+    classpath compiler
+
+    args =
+            [
+                    compiler,
+                    '-m', 'java',
+                    '-o', outdir,
+                    '-ns','com.lunohod.asn.messages',
+                    '-f', infile
+            ]
+}
+
+gradle.projectsEvaluated {
+    compileJava.dependsOn(genMessages)
+}

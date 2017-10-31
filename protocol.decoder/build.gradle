@@ -1,0 +1,18 @@
+group 'com.lunohod'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'scala'
+// apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    // ivyCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.3'
+    testCompile 'org.scalatest:scalatest_2.12:3.0.0'
+    testCompile 'junit:junit:4.12'
+    compile project(':asn1.messages')
+
+}
