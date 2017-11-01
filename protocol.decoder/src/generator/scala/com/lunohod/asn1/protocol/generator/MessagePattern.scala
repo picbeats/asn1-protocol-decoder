@@ -9,7 +9,7 @@ sealed abstract class MessagePattern(name:String, url:String) {
 
   class CompanionWriter(writer: Writer) {
     def writeCompanionObject():Unit = {
-      writer.writeln(s"""object $name { val reg = \"\"\"$regexString\"\"\".r }""")
+      writer.writeln(s"""object $name { val reg: Regex = \"\"\"$regexString\"\"\".r }""")
     }
   }
 
@@ -26,7 +26,7 @@ case class SyncPattern(name: String, url:String, request:String, response:String
   }
 
   override def writeCase(writer: Writer): Unit = {
-    writer.writeln(s"        case ($name.reg(), Some(request), Some(response)) => new $name(decode[$request](request), decode[$response](response))")
+    writer.writeln(s"        case ($name.reg(), Some(req), Some(resp)) => new $name(decode[$request](req), decode[$response](resp))")
   }
 }
 
@@ -38,7 +38,7 @@ case class LogPattern(name: String, url:String, request:String) extends MessageP
   }
 
   override def writeCase(writer: Writer): Unit = {
-    writer.writeln(s"        case ($name.reg(), Some(request), _) => new $name(decode[$request](request))")
+    writer.writeln(s"        case ($name.reg(), Some(req), _) => new $name(decode[$request](req))")
   }
 }
 
@@ -50,7 +50,7 @@ case class ReportPattern(name: String, url:String, request: String) extends Mess
   }
 
   override def writeCase(writer: Writer): Unit = {
-    writer.writeln(s"        case ($name.reg(revision), Some(request), _) => new $name(revision, decode[$request](request))")
+    writer.writeln(s"        case ($name.reg(revision), Some(req), _) => new $name(revision, decode[$request](req))")
   }
 }
 
@@ -62,7 +62,7 @@ case class ConfigPattern(name: String, url:String, response: String) extends Mes
   }
 
   override def writeCase(writer: Writer): Unit = {
-    writer.writeln(s"        case ($name.reg(revision), _, Some(response)) => new $name(revision, decode[$response](response))")
+    writer.writeln(s"        case ($name.reg(revision), _, Some(resp)) => new $name(revision, decode[$response](resp))")
   }
 }
 

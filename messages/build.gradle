@@ -1,4 +1,4 @@
-group 'lunohod'
+group 'com.lunohod'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'

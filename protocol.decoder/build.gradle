@@ -4,15 +4,95 @@ version '1.0-SNAPSHOT'
 apply plugin: 'scala'
 // apply plugin: 'idea'
 
+sourceCompatibility = 1.8
+
 repositories {
     mavenCentral()
     // ivyCentral()
 }
 
+
+configurations{
+    generatorCompile
+}
+
+sourceSets {
+    generator {
+        scala  {
+            srcDir 'src/generator/scala'
+        }
+
+        resources {
+            srcDir 'src/generator/resources'
+        }
+
+        compileClasspath = configurations.generatorCompile
+    }
+
+    generatorTest {
+        scala  {
+            srcDir 'src/generatorTest/scala'
+        }
+
+        resources {
+            srcDir 'src/generatorTest/resources'
+        }
+
+        compileClasspath += configurations.generatorCompile
+        runtimeClasspath += configurations.generatorCompile
+    }
+}
+
 dependencies {
+    // scalaTools 'org.scala-lang:scala-library:2.12.3'
     compile 'org.scala-lang:scala-library:2.12.3'
+    generatorCompile 'org.scala-lang:scala-library:2.12.3'
+    generatorCompile group: 'org.rogach', name: 'scallop_2.12', version: '3.1.1'
+    generatorCompile group: 'com.nrinaudo', name: 'kantan.csv_2.12', version: '0.3.0'
+    generatorTestCompile 'org.scalatest:scalatest_2.12:3.0.0'
+    generatorTestCompile 'junit:junit:4.12'
+    generatorTestCompile sourceSets.generator.output
+
     testCompile 'org.scalatest:scalatest_2.12:3.0.0'
     testCompile 'junit:junit:4.12'
     compile project(':asn1.messages')
-
 }
+
+sourceSets.main.scala.srcDir "${buildDir}/generated-src/main/scala"
+
+//idea {
+//    module {
+//        // Marks the already(!) added srcDir as "generated"
+//        generatedSourceDirs += file("${buildDir}/generated-src/main/scala")
+//    }
+//}
+
+task generateProtocolDecoder(type: JavaExec){
+    classpath += sourceSets.generator.runtimeClasspath
+    main = "com.lunohod.asn1.protocol.generator.Main"
+
+    def protocolCsv = "${projectDir}/../messages/src/main/resources/protocol.csv"
+    def outFile = "${buildDir}/generated-src/main/scala/com/lunohod/asn/protocol/decoder/ProtocolDecoder.scala"
+
+    inputs.file protocolCsv
+    inputs.file sourceSets.generator.output
+    outputs.file outFile
+
+    args = [
+            '-i',
+            protocolCsv,
+            '-o',
+            outFile
+    ]
+}
+
+
+gradle.projectsEvaluated {
+    compileScala.dependsOn(generateProtocolDecoder)
+    compileGeneratorTestScala.dependsOn(compileGeneratorScala)
+}
+
+compileScala.doFirst {
+    // compileScala.classpath.each {i -> println i}
+}
+

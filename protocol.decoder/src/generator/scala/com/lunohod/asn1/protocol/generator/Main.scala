@@ -1,15 +1,24 @@
 package com.lunohod.asn1.protocol.generator
 
 import java.io.{BufferedWriter, File, FileWriter}
-import org.rogach.scallop.ScallopConf
+import java.nio.file.{Files, Path, Paths}
 
 class Main(args: Array[String]) {
   val conf = new Conf(args)  // Note: This line also works for "object Main extends App"
 
   def start(): Unit = {
-    val patterns = ProtocolReader.read(conf.in.apply());
+    val source = conf.in.apply()
+    val sourceFile= Paths.get(source).toFile
+    println(s"Source: $sourceFile")
+    val patterns = ProtocolReader.read(sourceFile);
     patterns.foreach(println _)
-    val file = new File(conf.out.apply())
+
+    val target = conf.out.apply()
+    println(s"Target: $target")
+    val file = new File(target)
+    val directory = Paths.get(target).getParent()
+    println(s"Create directory to: $directory")
+    Files.createDirectories(directory)
     val bw = new BufferedWriter(new FileWriter(file))
     ProtocolDecoderWriter.generateProtocolDecoder(patterns)(bw)
     bw.close()
@@ -27,9 +36,5 @@ object Main extends App {
   }
 }
 
-final class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
-  val in = opt[String](required = true, descr = "input .csv defining COAP level protocol")
-  val out = opt[String](required = true, descr = "output decoder scala file")
-  verify()
-}
+
 

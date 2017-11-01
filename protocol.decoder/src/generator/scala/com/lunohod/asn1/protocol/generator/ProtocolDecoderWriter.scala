@@ -6,9 +6,10 @@ import LineWriter._
 object ProtocolDecoderWriter {
   def generateProtocolDecoder(patterns:Array[MessagePattern])(fileWriter: Writer):Unit = {
     fileWriter.writeln("package com.lunohod.asn1.protocol.decoder")
-    fileWriter.writeln()
+    fileWriter.writeln("// This a generated file!")
     fileWriter.writeln("import com.lunohod.asn.messages._")
     fileWriter.writeln("import scala.reflect.ClassTag")
+    fileWriter.writeln("import scala.util.matching.Regex")
     fileWriter.writeln()
     fileWriter.writeln("sealed trait Message")
     fileWriter.writeln()
@@ -36,7 +37,7 @@ object ProtocolDecoderWriter {
     fileWriter.writeln("      (rl, request, response) match {")
     patterns.foreach(_.writeCase(fileWriter))
 
-    fileWriter.writeln("      case _ => new UnknownMessage()")
+    fileWriter.writeln("      case _ => UnknownMessage()")
     fileWriter.writeln("      }")
     fileWriter.writeln("    } catch {")
     fileWriter.writeln("      case e:Exception => BrokenMessage(e)")

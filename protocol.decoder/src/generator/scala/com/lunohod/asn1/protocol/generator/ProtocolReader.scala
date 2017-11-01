@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
 
 object ProtocolReader {
   implicit val protocolCsvDecoder: RowDecoder[MessagePattern] = RowDecoder.ordered {
-    (resource: String, name: String, request: Option[String], response: Option[String]) => {
+    (method: String, resource: String, name: String, request: Option[String], response: Option[String]) => {
       (request, response) match {
         case (Some(req), Some(resp)) => SyncPattern(name, resource, req, resp)
         case (Some(req), None) =>
