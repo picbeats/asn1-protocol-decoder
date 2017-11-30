@@ -75,7 +75,7 @@ task generateProtocolDecoder(type: JavaExec){
     def outFile = "${buildDir}/generated-src/main/scala/com/lunohod/asn/protocol/decoder/ProtocolDecoder.scala"
 
     inputs.file protocolCsv
-    inputs.file sourceSets.generator.output
+    inputs.dir sourceSets.generator.output
     outputs.file outFile
 
     args = [
