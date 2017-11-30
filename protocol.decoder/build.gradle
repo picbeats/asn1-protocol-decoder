@@ -86,11 +86,15 @@ task generateProtocolDecoder(type: JavaExec){
     ]
 }
 
+tasks.compileGeneratorTestScala.dependsOn(compileGeneratorScala)
+tasks.generateProtocolDecoder.dependsOn(compileGeneratorScala)
+tasks.compileScala.dependsOn(generateProtocolDecoder)
+tasks.build.dependsOn(compileScala)
 
-gradle.projectsEvaluated {
-    compileScala.dependsOn(generateProtocolDecoder)
-    compileGeneratorTestScala.dependsOn(compileGeneratorScala)
-}
+//gradle.projectsEvaluated {
+//    compileScala.dependsOn(generateProtocolDecoder)
+//    compileGeneratorTestScala.dependsOn(compileGeneratorScala)
+//}
 
 compileScala.doFirst {
     // compileScala.classpath.each {i -> println i}

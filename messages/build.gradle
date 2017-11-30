@@ -51,6 +51,9 @@ task genMessages(type: JavaExec) {
             ]
 }
 
-gradle.projectsEvaluated {
-    compileJava.dependsOn(genMessages)
-}
+tasks.compileJava.dependsOn(genMessages)
+tasks.build.dependsOn(compileJava)
+
+//gradle.projectsEvaluated {
+//    compileJava.dependsOn(genMessages)
+//}
